@@ -24,15 +24,18 @@ async def send_email(payload: SendMailDto):
     smtp_port = os.getenv('SMTP_PORT')
     sender_email = os.getenv('SENDER_EMAIL')
     sender_password = os.getenv('SENDER_PASSWORD')
-    s = smtplib.SMTP(host=smtp_host, port=smtp_port)
-    s.starttls()
-    s.login(sender_email, sender_password)
-    msg = MIMEMultipart()
+    try:
+        s = smtplib.SMTP(host=smtp_host, port=smtp_port)
+        s.starttls()
+        s.login(sender_email, sender_password)
+        msg = MIMEMultipart()
 
-    msg['From'] = sender_email
-    msg['To'] = payload.recipient
-    msg['Subject'] = payload.subject
-    msg.attach(MIMEText(payload.content, 'plain'))
-    s.send_message(msg)
-
-    return {'recipient': payload.recipient, 'content': payload.content}
+        msg['From'] = sender_email
+        msg['To'] = payload.recipient
+        msg['Subject'] = payload.subject
+        msg.attach(MIMEText(payload.content, 'plain'))
+        s.send_message(msg)
+        s.logout()
+    except e:
+        return {'error': e}
+    return {'result': 'success'}
