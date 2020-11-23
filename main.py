@@ -36,6 +36,6 @@ async def send_email(payload: SendMailDto):
         msg.attach(MIMEText(payload.content, 'plain'))
         s.send_message(msg)
         s.logout()
-    except e:
-        return {'error': e}
+    except Exception as err:
+        return {'error': err}
     return {'result': 'success'}
